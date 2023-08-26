@@ -1,0 +1,128 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myschedule/blocs/login/login_bloc.dart';
+import 'package:myschedule/blocs/login/login_event.dart';
+import 'package:myschedule/blocs/login/login_state.dart';
+import 'package:myschedule/views/screens/task/todotask.dart';
+
+class PhoneLoginScreen extends StatefulWidget {
+  const PhoneLoginScreen({Key? key}) : super(key: key);
+
+  @override
+  PhoneLoginScreenState createState() => PhoneLoginScreenState();
+}
+
+class PhoneLoginScreenState extends State<PhoneLoginScreen> {
+  final TextEditingController _phoneNumberController =
+      TextEditingController(text: '+84');
+  bool viewTimer = false;
+  bool viewAuthenticationFail = false;
+  int countdownSeconds = 60;
+  Timer? timer;
+  String errorMessage = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final loginBloc = BlocProvider.of<LoginBloc>(context);
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const TodoListScreen()),
+          );
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Đăng nhập thành công'),
+                backgroundColor: Colors.green),
+          );
+          ;
+        } else if (state is LoginFailure) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(state.error), backgroundColor: Colors.red));
+        } else if (state is RegisterSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const TodoListScreen()),
+          );
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Đăng ký thành công'),
+                backgroundColor: Colors.green),
+          );
+          ;
+        } else if (state is LoginDialogFailure) {
+          print("Error Message: ${state.errorMessage}");
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Lỗi'),
+                content: Text(state.errorMessage),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Đóng'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Đăng nhập bằng số điện thoại'),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: _phoneNumberController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Số điện thoại dạng +84 xxx xxx xxx',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+                    final phoneNumber = _phoneNumberController.text;
+                    loginBloc.add(PhoneNumberLoginButtonPressed(
+                        phoneNumber: phoneNumber));
+                  },
+                  child: const Text('Gửi yêu cầu đăng nhập'),
+                ),
+                Visibility(
+                  visible: viewTimer,
+                  child: Text(
+                    'Quá trình đăng nhập tự động sẽ diễn ra khi tin nhắn xác thực được gửi tới, quý khách vui lòng đợi trong vòng $countdownSeconds giây',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+                Visibility(
+                  visible: viewAuthenticationFail,
+                  child: const Text(
+                    'Đăng nhập bằng số điện thoại không thành công! Đã xảy ra lỗi trong quá trình xác thực',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

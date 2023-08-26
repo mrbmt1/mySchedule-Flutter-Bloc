@@ -1,0 +1,7 @@
+<resources>
+    <!-- Các màu sắc liên quan đến nút Facebook -->
+    <color name="com_facebook_button_background_color_focused_disabled">#FF0000</color>
+    <color name="com_facebook_button_background_color_focused">#00FF00</color>
+    <color name="com_facebook_button_border_color_focused">#0000FF</color>
+    <!-- Các màu sắc khác nếu cần -->
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">mySchedule</string>
+    <string name="facebook_app_id">841980070097932</string>
+    <string name="fb_login_protocol_scheme">fb841980070097932</string>
+<string name="facebook_client_token">567ef222d0b8d0543d97000051e922bfeb389</string>
+</resources>
+
