@@ -25,3 +25,5 @@ class SetNewPasswordButtonPressed extends SetNewPasswordEvent {
         confirmPassword,
       ];
 }
+
+class ToggleObscureText extends SetNewPasswordEvent {}

@@ -2,8 +2,9 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:myschedule/views/screens/task/todotask.dart';
-import 'edit_task.dart';
+import 'package:myschedule/models/todo_item.dart';
+import 'package:myschedule/views/widgets/task/to_do_task_widget/show_option_notification_dialog.dart';
+import '../../../screens/task/edit_task.dart';
 
 class TaskWidget extends StatelessWidget {
   final TodoItem todo;

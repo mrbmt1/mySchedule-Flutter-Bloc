@@ -22,19 +22,24 @@ class SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
   final _confirmPasswordController = TextEditingController();
 
   bool isObscure = true;
-  void onObscurePressed() {
-    setState(() {
-      isObscure = !isObscure;
-    });
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final setNewPasswordBloc = BlocProvider.of<SetNewPasswordBloc>(context);
-
     return BlocListener<SetNewPasswordBloc, SetNewPasswordState>(
       listener: (context, state) {
-        if (state is SetNewPasswordSuccess) {
+        if (state is SetNewPasswordObscureToggled) {
+          setState(() {
+            isObscure = state.isObscure;
+          });
+        } else if (state is SetNewPasswordSuccess) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -74,7 +79,9 @@ class SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                         isObscure ? Icons.visibility_off : Icons.visibility,
                         color: Colors.grey,
                       ),
-                      onPressed: onObscurePressed,
+                      onPressed: () {
+                        setNewPasswordBloc.add(ToggleObscureText());
+                      },
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -108,7 +115,9 @@ class SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                         isObscure ? Icons.visibility_off : Icons.visibility,
                         color: Colors.grey,
                       ),
-                      onPressed: onObscurePressed,
+                      onPressed: () {
+                        setNewPasswordBloc.add(ToggleObscureText());
+                      },
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),

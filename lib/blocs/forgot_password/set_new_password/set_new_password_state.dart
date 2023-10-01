@@ -21,3 +21,12 @@ class SetNewPasswordFailure extends SetNewPasswordState {
 }
 
 class SetNewPasswordSuccess extends SetNewPasswordState {}
+
+class SetNewPasswordObscureToggled extends SetNewPasswordState {
+  final bool isObscure;
+
+  const SetNewPasswordObscureToggled({required this.isObscure});
+
+  @override
+  List<Object?> get props => [isObscure];
+}

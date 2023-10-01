@@ -22,7 +22,6 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final forgotPasswordBloc = BlocProvider.of<ForgotPasswordBloc>(context);
-
     return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
       listener: (context, state) {
         if (state is ForgotPasswordSuccess) {

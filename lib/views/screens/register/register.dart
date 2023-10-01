@@ -25,19 +25,12 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   final _formKey = GlobalKey<FormState>();
-
   final _passwordController = TextEditingController();
-
   final _usernameController = TextEditingController();
-
   final _fullNameController = TextEditingController();
-
   final _phoneController = TextEditingController();
-
   final _emailController = TextEditingController();
-
   final _dobController = TextEditingController();
-
   String _gender = 'Khác';
   final ValueNotifier<bool> _isPasswordVisibleNotifier =
       ValueNotifier<bool>(false);
@@ -45,7 +38,6 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final registerBloc = BlocProvider.of<RegisterBloc>(context);
-
     return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state is RegisterSuccess) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myschedule/views/screens/task/todotask.dart';
+import 'package:myschedule/models/todo_item.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final TodoItem todo;

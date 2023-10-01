@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myschedule/models/todo_item.dart';
+import 'package:myschedule/utils/task/create_task_utils/date_time_helper.dart';
+import 'package:myschedule/utils/task/create_task_utils/notification_helper.dart';
 import 'package:myschedule/views/screens/task/todotask.dart';
 
 class CreateTaskScreen extends StatefulWidget {
@@ -20,45 +23,6 @@ class CreateTaskScreenState extends State<CreateTaskScreen> {
   TimeOfDay _selectedTimeNotification = const TimeOfDay(hour: 0, minute: 0);
   bool _isNotification = false;
 
-  Future<void> _selectDate() async {
-    final DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (selectedDate != null) {
-      setState(() {
-        _selectedDate = selectedDate;
-      });
-    }
-  }
-
-  Future<void> _selectTime() async {
-    final TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (selectedTime != null) {
-      setState(() {
-        _selectedTime = selectedTime;
-      });
-    }
-  }
-
-  Future<void> _selectTimeNotification() async {
-    final TimeOfDay? selectedTimeNotification = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 0, minute: 0),
-    );
-    if (selectedTimeNotification != null) {
-      setState(() {
-        _selectedTimeNotification = selectedTimeNotification;
-        _isNotification = true;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +36,7 @@ class CreateTaskScreenState extends State<CreateTaskScreen> {
           children: [
             TextField(
               onChanged: (value) {
-                setState(() {
-                  _content = value;
-                });
+                _content = value;
               },
               decoration: const InputDecoration(
                 hintText: 'Nhập nội dung task',
@@ -84,7 +46,15 @@ class CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: _selectDate,
+              onPressed: () async {
+                DateTime? pickedDate =
+                    await DateTimeHelper.selectDate(context, _selectedDate);
+                if (pickedDate != null) {
+                  setState(() {
+                    _selectedDate = pickedDate;
+                  });
+                }
+              },
               child: Row(
                 children: [
                   const Icon(Icons.calendar_today),
@@ -96,7 +66,15 @@ class CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
             const SizedBox(height: 0),
             TextButton(
-              onPressed: _selectTime,
+              onPressed: () async {
+                TimeOfDay? pickedTime =
+                    await DateTimeHelper.selectTime(context, _selectedTime);
+                if (pickedTime != null) {
+                  setState(() {
+                    _selectedTime = pickedTime;
+                  });
+                }
+              },
               child: Row(
                 children: [
                   const Icon(Icons.access_time),
@@ -107,7 +85,17 @@ class CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
             const SizedBox(height: 0),
             TextButton(
-              onPressed: _selectTimeNotification,
+              onPressed: () async {
+                TimeOfDay? pickedNotificationTime =
+                    await NotificationHelper.selectTimeNotification(
+                        context, _selectedTimeNotification);
+                if (pickedNotificationTime != null) {
+                  setState(() {
+                    _selectedTimeNotification = pickedNotificationTime;
+                    _isNotification = true;
+                  });
+                }
+              },
               child: Row(
                 children: [
                   const Icon(Icons.notifications_active_outlined),

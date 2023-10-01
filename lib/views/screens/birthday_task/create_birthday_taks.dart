@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myschedule/models/todo_item.dart';
 // import 'package:timezone/data/latest.dart' as tz;
 // import 'package:timezone/timezone.dart' as tz;
-import '../task/todotask.dart';
 import 'birthdaylist.dart';
 
 class CreateBirthDayTaskScreen extends StatefulWidget {
@@ -37,18 +37,6 @@ class CreateBirthDayTaskScreenState extends State<CreateBirthDayTaskScreen> {
       });
     }
   }
-
-  // Future<void> _selectTime() async {
-  //   final TimeOfDay? selectedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.now(),
-  //   );
-  //   if (selectedTime != null) {
-  //     setState(() {
-  //       _selectedTime = selectedTime;
-  //     });
-  //   }
-  // }
 
   Future<void> _selectTimeNotification() async {
     final TimeOfDay? selectedTimeNotification = await showTimePicker(

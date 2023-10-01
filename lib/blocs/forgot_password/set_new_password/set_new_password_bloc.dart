@@ -10,9 +10,11 @@ import 'package:myschedule/blocs/forgot_password/set_new_password/set_new_passwo
 class SetNewPasswordBloc
     extends Bloc<SetNewPasswordEvent, SetNewPasswordState> {
   final FirebaseAuth _firebaseAuth;
+  bool isObscure = true;
 
   SetNewPasswordBloc(this._firebaseAuth) : super(SetNewPasswordInitial()) {
     on<SetNewPasswordButtonPressed>(_onSetNewPasswordButtonPressed);
+    on<ToggleObscureText>(_onToggleObscureText);
   }
 
   void _onSetNewPasswordButtonPressed(SetNewPasswordButtonPressed event,
@@ -49,5 +51,12 @@ class SetNewPasswordBloc
     } else {
       emit(const SetNewPasswordFailure(error: "Mật khẩu không khớp nhau"));
     }
+  }
+
+  void _onToggleObscureText(
+      ToggleObscureText event, Emitter<SetNewPasswordState> emit) {
+    isObscure = !isObscure;
+    emit(SetNewPasswordObscureToggled(isObscure: isObscure));
+    print("${isObscure}");
   }
 }
