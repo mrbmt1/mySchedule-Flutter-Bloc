@@ -9,7 +9,6 @@ import 'package:myschedule/models/todo_item.dart';
 class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
   static int lastNotificationID = 0;
   int newNotificationID = ++lastNotificationID;
-  String? content;
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   TimeOfDay selectedTimeNotification = const TimeOfDay(hour: 0, minute: 0);
@@ -23,14 +22,14 @@ class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
       CreateTaskButtonPressed event, Emitter<CreateTaskState> emit) async {
     emit(CreateTaskLoading());
     try {
-      if (content == null) {
+      if (event.content == null) {
         emit(const CreateTaskFailure(error: 'Vui lòng nhập nội dung task!'));
       } else {
         lastNotificationID++;
         TodoItem newTodo = TodoItem(
           id: '1',
           notificationID: newNotificationID,
-          content: content!,
+          content: event.content!,
         );
         newTodo.date = selectedDate;
         newTodo.time = selectedTime;
@@ -49,6 +48,7 @@ class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
             'isNotification': event.isNotification,
             'timeNotification':
                 "${event.selectedTimeNotification.hour}:${event.selectedTimeNotification.minute}",
+            'notificationID': lastNotificationID,
           });
         }
         emit(CreateTaskSuccess());

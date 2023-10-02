@@ -15,20 +15,11 @@ class CreateTaskButtonPressed extends CreateTaskEvent {
   final TimeOfDay selectedTimeNotification;
   final bool isNotification;
 
-  const CreateTaskButtonPressed({
+  CreateTaskButtonPressed({
     required this.content,
     required this.selectedDate,
     required this.selectedTime,
     required this.selectedTimeNotification,
     required this.isNotification,
   });
-
-  @override
-  List<Object?> get props => [
-        content,
-        selectedDate,
-        selectedTime,
-        selectedTimeNotification,
-        isNotification,
-      ];
 }
