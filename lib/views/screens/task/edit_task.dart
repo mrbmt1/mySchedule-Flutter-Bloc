@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myschedule/blocs/task/edit_task/edit_task_bloc.dart';
+import 'package:myschedule/blocs/task/edit_task/edit_task_event.dart';
+import 'package:myschedule/blocs/task/edit_task/edit_task_state.dart';
 import 'package:myschedule/models/todo_item.dart';
 
 class EditTaskScreen extends StatefulWidget {
@@ -81,112 +83,97 @@ class EditTaskScreenState extends State<EditTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chỉnh sửa task'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              onChanged: (value) {
-                setState(() {
-                  _content = value;
-                });
-              },
-              decoration: const InputDecoration(
-                hintText: 'Nhập nội dung task',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.edit_document),
-              ),
-              controller: _contentController,
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: _selectDate,
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_today),
-                  const SizedBox(width: 8),
-                  Text(
-                      'Ngày đến hạn: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 0),
-            TextButton(
-              onPressed: _selectTime,
-              child: Row(
-                children: [
-                  const Icon(Icons.access_time),
-                  const SizedBox(width: 8),
-                  Text('Giờ đến hạn: ${_selectedTime.format(context)}'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 0),
-            TextButton(
-              onPressed: _selectTimeNotification,
-              child: Row(
-                children: [
-                  const Icon(Icons.notifications_active_outlined),
-                  const SizedBox(width: 8),
-                  Text(_isNotification
-                      ? 'Bật thông báo: ${_selectedTimeNotification.format(context)}'
-                      : 'Bật thông báo: Không'),
-                ],
-              ),
-            ),
-          ],
+    final editTaskBloc = BlocProvider.of<EditTaskBloc>(context);
+
+    return BlocListener<EditTaskBloc, EditTaskState>(
+      listener: (context, state) {
+        if (state is EditTaskSuccess) {
+          Navigator.pop(context);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Tạo task thành công!'),
+                duration: Duration(seconds: 2),
+                backgroundColor: Colors.green),
+          );
+        } else if (state is EditTaskFailure) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(state.error), backgroundColor: Colors.red));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Chỉnh sửa task'),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.save),
-        onPressed: () async {
-          if (_content.isEmpty) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Chưa nhập nội dung"),
-                  content: const Text("Vui lòng nhập nội dung trước khi lưu"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Đóng"),
-                    ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  _content = value;
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Nhập nội dung task',
+                  border: OutlineInputBorder(),
+                  suffixIcon: Icon(Icons.edit_document),
+                ),
+                controller: _contentController,
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: _selectDate,
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today),
+                    const SizedBox(width: 8),
+                    Text(
+                        'Ngày đến hạn: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'),
                   ],
-                );
-              },
-            );
-          } else {
-            User? currentUser = FirebaseAuth.instance.currentUser;
-            if (currentUser != null) {
-              await FirebaseFirestore.instance
-                  .collection('tasks')
-                  .doc(widget.todo.id)
-                  .update({
-                'description': _content,
-                'dueDate': _selectedDate,
-                'updatedAt': DateTime.now(),
-                'timeOfDueDay': _selectedTime.format(context),
-                'isNotification': _isNotification,
-                'timeNotification': _selectedTimeNotification.format(context),
-              });
-            }
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Cập nhật task thành công!'),
-                  duration: Duration(seconds: 2),
-                  backgroundColor: Colors.green),
-            );
-          }
-        },
+                ),
+              ),
+              const SizedBox(height: 0),
+              TextButton(
+                onPressed: _selectTime,
+                child: Row(
+                  children: [
+                    const Icon(Icons.access_time),
+                    const SizedBox(width: 8),
+                    Text('Giờ đến hạn: ${_selectedTime.format(context)}'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 0),
+              TextButton(
+                onPressed: _selectTimeNotification,
+                child: Row(
+                  children: [
+                    const Icon(Icons.notifications_active_outlined),
+                    const SizedBox(width: 8),
+                    Text(_isNotification
+                        ? 'Bật thông báo: ${_selectedTimeNotification.format(context)}'
+                        : 'Bật thông báo: Không'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.save),
+          onPressed: () async {
+            editTaskBloc.add(EditTaskButtonPressed(
+              id: widget.todo.id,
+              content: _content,
+              selectedDate: _selectedDate,
+              selectedTime: _selectedTime,
+              selectedTimeNotification: _selectedTimeNotification,
+              isNotification: _isNotification,
+            ));
+          },
+        ),
       ),
     );
   }

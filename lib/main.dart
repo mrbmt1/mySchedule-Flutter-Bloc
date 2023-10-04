@@ -10,6 +10,7 @@ import 'package:myschedule/blocs/profile/profile_bloc.dart';
 import 'package:myschedule/blocs/register/register_bloc.dart';
 import 'package:myschedule/blocs/setting/setting_bloc.dart';
 import 'package:myschedule/blocs/task/create_task/create_task_bloc.dart';
+import 'package:myschedule/blocs/task/edit_task/edit_task_bloc.dart';
 import 'package:myschedule/views/screens/login/login.dart';
 import 'package:myschedule/views/screens/setting/setting_option/theme.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => CreateTaskBloc(),
+        ),
+        BlocProvider(
+          create: (_) => EditTaskBloc(),
         ),
       ],
       child: const ThemeConfiguration(
