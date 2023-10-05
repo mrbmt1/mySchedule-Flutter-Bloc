@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myschedule/blocs/task/edit_task/edit_task_event.dart';
-import 'package:myschedule/blocs/task/edit_task/edit_task_state.dart';
+import 'package:myschedule/blocs/birthday_task/edit_birthday/edit_birthday_event.dart';
+import 'package:myschedule/blocs/birthday_task/edit_birthday/edit_birthday_state.dart';
 
-class EditTaskBloc extends Bloc<EditTaskEvent, EditTaskState> {
+class EditBirthDayTaskBloc
+    extends Bloc<EditBirthDayTaskEvent, EditBirthDayTaskState> {
   static int lastNotificationID = 0;
   int newNotificationID = ++lastNotificationID;
   DateTime selectedDate = DateTime.now();
@@ -13,15 +14,15 @@ class EditTaskBloc extends Bloc<EditTaskEvent, EditTaskState> {
   TimeOfDay selectedTimeNotification = const TimeOfDay(hour: 0, minute: 0);
   bool isNotification = false;
 
-  EditTaskBloc() : super(const EditTaskInitial()) {
-    on<EditTaskButtonPressed>(_onEditTaskButtonPressed);
+  EditBirthDayTaskBloc() : super(const EditBirthDayTaskInitial()) {
+    on<EditBirthDayTaskButtonPressed>(_onEditBirthDayTaskButtonPressed);
     on<SelectDateEvent>(_onSelectDate);
-    on<SelectTimeEvent>(_onSelectTime);
     on<SelectTimeNotificationEvent>(_onSelectTimeNotification);
   }
 
-  void _onSelectDate(SelectDateEvent event, Emitter<EditTaskState> emit) async {
-    emit(const EditTaskInitial());
+  void _onSelectDate(
+      SelectDateEvent event, Emitter<EditBirthDayTaskState> emit) async {
+    emit(const EditBirthDayTaskInitial());
 
     final DateTime? selectedDate = await showDatePicker(
       context: event.context,
@@ -34,21 +35,9 @@ class EditTaskBloc extends Bloc<EditTaskEvent, EditTaskState> {
     }
   }
 
-  void _onSelectTime(SelectTimeEvent event, Emitter<EditTaskState> emit) async {
-    emit(const EditTaskInitial());
-
-    final TimeOfDay? selectedTime = await showTimePicker(
-      context: event.context,
-      initialTime: event.selectedTime,
-    );
-    if (selectedTime != null) {
-      emit(TimeSelectedState(selectedTime));
-    }
-  }
-
-  void _onSelectTimeNotification(
-      SelectTimeNotificationEvent event, Emitter<EditTaskState> emit) async {
-    emit(const EditTaskInitial());
+  void _onSelectTimeNotification(SelectTimeNotificationEvent event,
+      Emitter<EditBirthDayTaskState> emit) async {
+    emit(const EditBirthDayTaskInitial());
 
     final TimeOfDay? selectedTimeNotification = await showTimePicker(
       context: event.context,
@@ -59,33 +48,32 @@ class EditTaskBloc extends Bloc<EditTaskEvent, EditTaskState> {
     }
   }
 
-  void _onEditTaskButtonPressed(
-      EditTaskButtonPressed event, Emitter<EditTaskState> emit) async {
-    emit(const EditTaskInitial());
+  void _onEditBirthDayTaskButtonPressed(EditBirthDayTaskButtonPressed event,
+      Emitter<EditBirthDayTaskState> emit) async {
+    emit(const EditBirthDayTaskInitial());
     try {
       if (event.content.isEmpty) {
-        emit(const EditTaskFailure(error: 'Vui lòng nhập nội dung task!'));
+        emit(const EditBirthDayTaskFailure(
+            error: 'Vui lòng nhập nội dung sinh nhật!'));
       } else {
         User? currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
           await FirebaseFirestore.instance
-              .collection('tasks')
+              .collection('birthdays')
               .doc(event.id)
               .update({
             'description': event.content,
-            'dueDate': event.selectedDate,
+            'birthDay': event.selectedDate,
             'updatedAt': DateTime.now(),
-            'timeOfDueDay':
-                "${event.selectedTime.hour}:${event.selectedTime.minute}",
             'isNotification': event.isNotification,
             'timeNotification':
                 "${event.selectedTimeNotification.hour}:${event.selectedTimeNotification.minute}",
           });
         }
-        emit(const EditTaskSuccess());
+        emit(const EditBirthDayTaskSuccess());
       }
     } catch (error) {
-      emit(EditTaskFailure(error: "Lỗi: $error"));
+      emit(EditBirthDayTaskFailure(error: "Lỗi: $error"));
     }
   }
 }

@@ -1,38 +1,38 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-abstract class CreateTaskState extends Equatable {
-  const CreateTaskState();
+abstract class CreateBirthDayTaskState extends Equatable {
+  const CreateBirthDayTaskState();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateTaskInitial extends CreateTaskState {
-  const CreateTaskInitial();
+class CreateBirthDayTaskInitial extends CreateBirthDayTaskState {
+  const CreateBirthDayTaskInitial();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateTaskLoading extends CreateTaskState {
-  const CreateTaskLoading();
+class CreateBirthDayTaskLoading extends CreateBirthDayTaskState {
+  const CreateBirthDayTaskLoading();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateTaskSuccess extends CreateTaskState {
-  const CreateTaskSuccess();
+class CreateBirthDayTaskSuccess extends CreateBirthDayTaskState {
+  const CreateBirthDayTaskSuccess();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateTaskFailure extends CreateTaskState {
+class CreateBirthDayTaskFailure extends CreateBirthDayTaskState {
   final String error;
 
-  const CreateTaskFailure({
+  const CreateBirthDayTaskFailure({
     required this.error,
   });
 
@@ -40,7 +40,7 @@ class CreateTaskFailure extends CreateTaskState {
   List<Object?> get props => [error];
 }
 
-class DateSelectedState extends CreateTaskState {
+class DateSelectedState extends CreateBirthDayTaskState {
   final DateTime selectedDate;
 
   const DateSelectedState(this.selectedDate);
@@ -48,7 +48,7 @@ class DateSelectedState extends CreateTaskState {
   List<Object?> get props => [selectedDate];
 }
 
-class TimeSelectedState extends CreateTaskState {
+class TimeSelectedState extends CreateBirthDayTaskState {
   final TimeOfDay selectedTime;
 
   const TimeSelectedState(this.selectedTime);
@@ -56,7 +56,7 @@ class TimeSelectedState extends CreateTaskState {
   List<Object?> get props => [selectedTime];
 }
 
-class TimeNotificationSelectedState extends CreateTaskState {
+class TimeNotificationSelectedState extends CreateBirthDayTaskState {
   final TimeOfDay selectedTimeNotification;
 
   const TimeNotificationSelectedState(this.selectedTimeNotification);

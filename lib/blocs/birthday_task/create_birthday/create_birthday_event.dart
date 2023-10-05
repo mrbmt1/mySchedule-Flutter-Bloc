@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-abstract class CreateTaskEvent extends Equatable {
-  const CreateTaskEvent();
+abstract class CreateBirthDayTaskEvent extends Equatable {
+  const CreateBirthDayTaskEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class SelectDateEvent extends CreateTaskEvent {
+class SelectDateEvent extends CreateBirthDayTaskEvent {
   final DateTime selectedDate;
   final BuildContext context;
 
@@ -17,7 +17,7 @@ class SelectDateEvent extends CreateTaskEvent {
   List<Object?> get props => [selectedDate, context];
 }
 
-class SelectTimeEvent extends CreateTaskEvent {
+class SelectTimeEvent extends CreateBirthDayTaskEvent {
   final TimeOfDay selectedTime;
   final BuildContext context;
 
@@ -26,7 +26,7 @@ class SelectTimeEvent extends CreateTaskEvent {
   List<Object?> get props => [selectedTime, context];
 }
 
-class SelectTimeNotificationEvent extends CreateTaskEvent {
+class SelectTimeNotificationEvent extends CreateBirthDayTaskEvent {
   final TimeOfDay selectedTimeNotification;
   final BuildContext context;
 
@@ -36,14 +36,14 @@ class SelectTimeNotificationEvent extends CreateTaskEvent {
   List<Object?> get props => [selectedTimeNotification, context];
 }
 
-class CreateTaskButtonPressed extends CreateTaskEvent {
+class CreateBirthDayTaskButtonPressed extends CreateBirthDayTaskEvent {
   final String content;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
   final TimeOfDay selectedTimeNotification;
   final bool isNotification;
 
-  const CreateTaskButtonPressed({
+  const CreateBirthDayTaskButtonPressed({
     required this.content,
     required this.selectedDate,
     required this.selectedTime,

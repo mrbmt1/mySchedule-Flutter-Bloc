@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'birthdaylist.dart';
+import 'package:myschedule/models/birthday_item.dart';
+import 'package:myschedule/utils/birthday/birthday_list/dialog_notification_widget.dart';
 import 'edit_birthday_task.dart';
 
 class BirthDayWidget extends StatelessWidget {

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:myschedule/blocs/birthday_task/create_birthday/create_birthday_bloc.dart';
+import 'package:myschedule/blocs/birthday_task/edit_birthday/edit_birthday_bloc.dart';
 import 'package:myschedule/blocs/forgot_password/forgot_password/forgot_password_bloc.dart';
 import 'package:myschedule/blocs/forgot_password/set_new_password/set_new_password_bloc.dart';
 import 'package:myschedule/blocs/login/login_bloc.dart';
@@ -58,6 +60,12 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => EditTaskBloc(),
+        ),
+        BlocProvider(
+          create: (_) => CreateBirthDayTaskBloc(),
+        ),
+        BlocProvider(
+          create: (_) => EditBirthDayTaskBloc(),
         ),
       ],
       child: const ThemeConfiguration(

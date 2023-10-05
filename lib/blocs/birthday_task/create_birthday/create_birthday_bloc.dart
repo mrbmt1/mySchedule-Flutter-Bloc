@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myschedule/blocs/task/create_task/create_task_event.dart';
-import 'package:myschedule/blocs/task/create_task/create_task_state.dart';
+import 'package:myschedule/blocs/birthday_task/create_birthday/create_birthday_event.dart';
+import 'package:myschedule/blocs/birthday_task/create_birthday/create_birthday_state.dart';
 import 'package:myschedule/models/todo_item.dart';
 
-class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
+class CreateBirthDayTaskBloc
+    extends Bloc<CreateBirthDayTaskEvent, CreateBirthDayTaskState> {
   static int lastNotificationID = 0;
   int newNotificationID = ++lastNotificationID;
   DateTime selectedDate = DateTime.now();
@@ -14,20 +15,19 @@ class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
   TimeOfDay selectedTimeNotification = const TimeOfDay(hour: 0, minute: 0);
   bool isNotification = false;
 
-  CreateTaskBloc() : super(const CreateTaskInitial()) {
-    on<CreateTaskButtonPressed>(_onCreateTaskButtonPressed);
+  CreateBirthDayTaskBloc() : super(const CreateBirthDayTaskInitial()) {
+    on<CreateBirthDayTaskButtonPressed>(_onCreateBirthDayTaskButtonPressed);
     on<SelectDateEvent>(_onSelectDate);
-    on<SelectTimeEvent>(_onSelectTime);
     on<SelectTimeNotificationEvent>(_onSelectTimeNotification);
   }
 
   void _onSelectDate(
-      SelectDateEvent event, Emitter<CreateTaskState> emit) async {
-    emit(const CreateTaskInitial());
+      SelectDateEvent event, Emitter<CreateBirthDayTaskState> emit) async {
+    emit(const CreateBirthDayTaskInitial());
     final DateTime? selectedDate = await showDatePicker(
       context: event.context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
     if (selectedDate != null) {
@@ -36,20 +36,9 @@ class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
     print("$selectedDate");
   }
 
-  void _onSelectTime(
-      SelectTimeEvent event, Emitter<CreateTaskState> emit) async {
-    emit(const CreateTaskInitial());
-    final TimeOfDay? selectedTime = await showTimePicker(
-        context: event.context, initialTime: TimeOfDay.now());
-    if (selectedTime != null) {
-      emit(TimeSelectedState(selectedTime));
-    }
-    print("$selectedTime");
-  }
-
-  void _onSelectTimeNotification(
-      SelectTimeNotificationEvent event, Emitter<CreateTaskState> emit) async {
-    emit(const CreateTaskInitial());
+  void _onSelectTimeNotification(SelectTimeNotificationEvent event,
+      Emitter<CreateBirthDayTaskState> emit) async {
+    emit(const CreateBirthDayTaskInitial());
 
     final TimeOfDay? selectedTimeNotification = await showTimePicker(
       context: event.context,
@@ -61,43 +50,40 @@ class CreateTaskBloc extends Bloc<CreateTaskEvent, CreateTaskState> {
     print("$selectedTimeNotification");
   }
 
-  void _onCreateTaskButtonPressed(
-      CreateTaskButtonPressed event, Emitter<CreateTaskState> emit) async {
-    emit(const CreateTaskLoading());
+  void _onCreateBirthDayTaskButtonPressed(CreateBirthDayTaskButtonPressed event,
+      Emitter<CreateBirthDayTaskState> emit) async {
+    emit(const CreateBirthDayTaskLoading());
     try {
       if (event.content.isEmpty) {
-        emit(const CreateTaskFailure(error: 'Vui lòng nhập nội dung task!'));
+        emit(const CreateBirthDayTaskFailure(
+            error: 'Vui lòng cho biết sinh nhật của ai'));
       } else {
         lastNotificationID++;
         TodoItem newTodo = TodoItem(
           id: '1',
           notificationID: newNotificationID,
-          content: event.content!,
+          content: event.content,
         );
         newTodo.date = selectedDate;
-        newTodo.time = selectedTime;
         newTodo.timeNotification = selectedTimeNotification;
         newTodo.isNotification = isNotification;
         User? currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
-          await FirebaseFirestore.instance.collection('tasks').add({
+          await FirebaseFirestore.instance.collection('birthdays').add({
             'userID': currentUser.uid,
-            'completed': false,
             'createdAt': DateTime.now(),
-            'dueDate': event.selectedDate,
+            'birthDay': event.selectedDate,
             'description': event.content,
-            'timeOfDueDay':
-                "${event.selectedTime.hour}:${event.selectedTime.minute}",
             'isNotification': event.isNotification,
             'timeNotification':
                 "${event.selectedTimeNotification.hour}:${event.selectedTimeNotification.minute}",
             'notificationID': lastNotificationID,
           });
         }
-        emit(const CreateTaskSuccess());
+        emit(const CreateBirthDayTaskSuccess());
       }
     } catch (error) {
-      emit(CreateTaskFailure(error: "Lỗi: $error"));
+      emit(CreateBirthDayTaskFailure(error: "Lỗi: $error"));
     }
   }
 }
