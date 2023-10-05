@@ -71,9 +71,7 @@ class CreateBirthDayTaskScreenState extends State<CreateBirthDayTaskScreen> {
             children: [
               TextField(
                 onChanged: (value) {
-                  setState(() {
-                    _content = value;
-                  });
+                  _content = value;
                 },
                 decoration: const InputDecoration(
                   hintText: 'Đó là sinh nhật của?',

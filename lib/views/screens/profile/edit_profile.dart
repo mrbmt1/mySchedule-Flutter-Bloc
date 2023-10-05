@@ -8,7 +8,9 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
+import 'package:myschedule/validators/validator_form.dart';
 import 'package:myschedule/views/screens/profile/profile.dart';
+import 'package:myschedule/views/widgets/profile/edit_profile/show_snack_bar_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -31,33 +33,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final List<String> _genderList = ['Nam', 'Nữ', 'Khác'];
   late String avatarURL;
   late String userId = FirebaseAuth.instance.currentUser!.uid;
-
-  void showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
-
-  bool _validatePhone(String? value) {
-    if (value != null &&
-        value.isNotEmpty &&
-        !RegExp(r'^\d{10}$').hasMatch(value)) {
-      return false;
-    }
-    return true;
-  }
-
-  bool _validateEmail(String? value) {
-    if (value != null &&
-        value.isNotEmpty &&
-        !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return false;
-    }
-    return true;
-  }
+  final _validatorForm = ValidatorForm();
 
   void _updateProfile() async {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -118,10 +94,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         if (fullname != data['fullName']) {
           updatedFields['fullName'] = fullname;
         }
-        if (phone != data['phone'] && _validatePhone(phone) == true) {
+        if (phone != data['phone'] &&
+            _validatorForm.validatePhone(phone) == true) {
           updatedFields['phone'] = phone;
         }
-        if (email != data['email'] && _validateEmail(email) == true) {
+        if (email != data['email'] &&
+            _validatorForm.validateEmail(email) == true) {
           updatedFields['email'] = email;
         }
         if (dob != data['dob']) {
@@ -469,12 +447,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.person_outline),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Không được để trống';
-                        }
-                        return null;
-                      },
+                      validator: _validatorForm.validateFullName,
                     ),
                     const SizedBox(height: 16.0),
                     TextFormField(
@@ -484,14 +457,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.phone),
                       ),
-                      validator: (value) {
-                        if (value != null &&
-                            value.isNotEmpty &&
-                            !RegExp(r'^\d{10}$').hasMatch(value)) {
-                          return 'Số điện thoại không hợp lệ';
-                        }
-                        return null;
-                      },
+                      validator: _validatorForm.validatePhone,
                     ),
                     const SizedBox(height: 16.0),
                     TextFormField(
@@ -501,42 +467,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.email),
                       ),
-                      validator: (value) {
-                        if (value != null &&
-                            value.isNotEmpty &&
-                            !RegExp(
-                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value)) {
-                          return 'Email không hợp lệ';
-                        }
-                        return null;
-                      },
+                      validator: _validatorForm.validateEmail,
                     ),
                     const SizedBox(height: 16.0),
                     TextFormField(
-                        controller: _dobController,
-                        decoration: const InputDecoration(
-                          labelText: 'Ngày sinh',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.calendar_today),
-                        ),
-                        onTap: () async {
-                          DateTime? dob = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
-                          if (dob == null) return;
-                          _dobController.text =
-                              DateFormat('dd/MM/yyyy').format(dob);
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          return null;
-                        }),
+                      controller: _dobController,
+                      decoration: const InputDecoration(
+                        labelText: 'Ngày sinh',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () async {
+                        DateTime? dob = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (dob == null) return;
+                        _dobController.text =
+                            DateFormat('dd/MM/yyyy').format(dob);
+                      },
+                      validator: _validatorForm.validateDob,
+                    ),
                     const SizedBox(height: 16.0),
                     DropdownButtonFormField<String>(
                       value: _gender,
@@ -547,9 +500,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               ))
                           .toList(),
                       onChanged: (value) {
-                        setState(() {
-                          _gender = value!;
-                        });
+                        _gender = value!;
                       },
                       decoration: const InputDecoration(
                         labelText: 'Giới tính',

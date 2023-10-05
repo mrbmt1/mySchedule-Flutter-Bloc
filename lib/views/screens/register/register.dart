@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:myschedule/blocs/register/register_bloc.dart';
 import 'package:myschedule/blocs/register/register_event.dart';
 import 'package:myschedule/blocs/register/register_state.dart';
+import 'package:myschedule/validators/validator_form.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -34,6 +35,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   String _gender = 'Khác';
   final ValueNotifier<bool> _isPasswordVisibleNotifier =
       ValueNotifier<bool>(false);
+  final _validatorForm = ValidatorForm();
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +73,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.person),
                       labelText: 'Tài khoản'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    } else if (value.length < 6) {
-                      return 'Độ dài ít nhất 6 ký tự';
-                    }
-                    return null;
-                  },
+                  validator: _validatorForm.validateUsername,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 10),
@@ -103,18 +98,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                         ),
                         labelText: 'Mật khẩu',
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Mật khẩu không được để trống';
-                        } else if (value.length < 6) {
-                          return 'Mật khẩu phải có ít nhất 6 ký tự';
-                        } else if (!RegExp(
-                                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])')
-                            .hasMatch(value)) {
-                          return 'Mật khẩu phải có chữ thường, chữ hoa, số và kí tự đặc biệt';
-                        }
-                        return null;
-                      },
+                      validator: _validatorForm.validatePassword,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                     );
                   },
@@ -127,12 +111,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       suffixIcon: Icon(Icons.person_outline_outlined),
                       labelText: 'Họ tên',
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      return null;
-                    },
+                    validator: _validatorForm.validateFullName,
                     autovalidateMode: AutovalidateMode.onUserInteraction),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -143,13 +122,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.phone),
                     ),
-                    validator: (value) {
-                      if (value == null ||
-                          !RegExp(r'^\d{10}$').hasMatch(value)) {
-                        return 'Số điện thoại không hợp lệ';
-                      }
-                      return null;
-                    },
+                    validator: _validatorForm.validatePhone,
                     autovalidateMode: AutovalidateMode.onUserInteraction),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -160,14 +133,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.mail),
                     ),
-                    validator: (value) {
-                      if (value == null ||
-                          !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value)) {
-                        return 'Email không hợp lệ';
-                      }
-                      return null;
-                    },
+                    validator: _validatorForm.validateEmail,
                     autovalidateMode: AutovalidateMode.onUserInteraction),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -191,12 +157,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.calendar_month_outlined),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ngày sinh không được bỏ trống';
-                      }
-                      return null;
-                    },
+                    validator: _validatorForm.validateDob,
                     autovalidateMode: AutovalidateMode.onUserInteraction),
                 const SizedBox(height: 10),
                 DropdownButtonFormField(
